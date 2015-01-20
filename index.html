@@ -1,0 +1,95 @@
+<style type="text/css" media="screen">
+body {
+
+  background: #dfdfdf url('images/bg.png') repeat;
+  
+}
+img {
+  background-color: #d7d7d7;
+}
+</style>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<html>
+    <body>
+    </body>
+</html>
+
+
+<script type="text/javascript">
+var images =  []
+
+function gotImages(data) {
+  var arrayLength = data.length;
+  var body = $("body")
+  var lastImage;
+  var zoom = 2;
+  
+  for (var i = 0; i < arrayLength; i++) {
+    
+    var datum = data[i]
+    var img = $('<img />',{ "data-src": "https://ortastuff.s3.amazonaws.com/images/taptalk/" +datum["path"], height:datum["size"][1] / zoom, width:datum["size"][0] /zoom  });
+    img.appendTo(body)
+
+    if ( i == 0 ) {
+      lastImage = img
+      images.push(img)
+      continue
+    };
+    
+    // left or down
+    
+    var side = Math.floor(Math.random() * 3)
+    var lastPosition = $(lastImage).position()
+     if(side){      
+      img.css({
+        position: "absolute",
+        left: (lastPosition.left + lastImage.width() + 10),
+        top: lastPosition.top 
+      })
+      
+    } else {
+      img.css({
+        position: "absolute",
+        left: lastPosition.left ,
+        top: lastPosition.top + lastImage.height() + 10
+      })
+
+    }
+    
+    lastImage = img
+    images.push(img)
+  }
+}
+
+function isOnScreen(element)
+{
+  if(!element) return false;
+    var curPos = element.offset();
+    var curTop = curPos.top;
+    var screenHeight = $(window).scrollTop() + window.innerHeight;
+    return (curTop > screenHeight) ? false : true;
+}
+
+$( window ).scroll(function() {
+  // set the src as you move down
+  var arrayLength = images.length;
+  for (var i = 0; i < arrayLength; i++) {
+    var image = images[i]
+    if (isOnScreen(image)) {
+      var datasrc = image[0].attributes.getNamedItem("data-src")
+      if (datasrc) {
+        $(image).attr("src", datasrc.value)
+        $(image).removeAttr("data-src")
+
+        images.splice( $.inArray(image, images), 1 );
+      }
+    }
+  }
+});
+
+
+</script>
+
+<script src="output.js" type="text/javascript" charset="utf-8"></script>
+
