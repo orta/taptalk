@@ -20,6 +20,8 @@ img {
 var images =  []
 
 function gotImages(data) {
+  data = shuffle(data)
+  
   var arrayLength = data.length;
   var body = $("body")
   var lastImage;
@@ -60,18 +62,18 @@ function gotImages(data) {
     lastImage = img
     images.push(img)
   }
+  scroller()
 }
 
-function isOnScreen(element)
-{
-  if(!element) return false;
-    var curPos = element.offset();
-    var curTop = curPos.top;
-    var screenHeight = $(window).scrollTop() + window.innerHeight;
-    return (curTop > screenHeight) ? false : true;
-}
+//+ Jonas Raoni Soares Silva
+//@ http://jsfromhell.com/array/shuffle [v1.0]
+function shuffle(o){ //v1.0
+    for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+    return o;
+};
 
-$( window ).scroll(function() {
+
+function scrolled() {
   // set the src as you move down
   var arrayLength = images.length;
   for (var i = 0; i < arrayLength; i++) {
@@ -86,6 +88,18 @@ $( window ).scroll(function() {
       }
     }
   }
+}
+
+function isOnScreen(element) {
+  if(!element) return false;
+  var curPos = element.offset();
+  var curTop = curPos.top;
+  var screenHeight = $(window).scrollTop() + window.innerHeight;
+  return (curTop > screenHeight) ? false : true;
+}
+
+$( window ).scroll(function() {
+  scrolled();
 });
 
 
